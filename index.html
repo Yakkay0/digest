@@ -20,16 +20,22 @@
 			</header>
 
 		<!-- Signup Form -->
-			<p>1. Registra un archivo en la Blockchain. Su contenido no saldrá de tu dispositivo, solo la huella que identifica el documento</p>
-			<form >
+			<div>
+				1. Registra un archivo en la Blockchain. Su contenido no saldrá de tu dispositivo, solo la huella que identifica el documento
+				<br>
+				2. Comprueba si el archivo ha sido modificado comparando el registro de la Blockchain
+			</div>
+			<div >
+				1.
 				<input type="file" id="input1">
-				<input type="submit" value="Registrar" onclick="f1()"/>
-			</form>
-			<p>2. Comprueba si el archivo ha sido modificado comparando el registro de la Blockchain</p>
-			<form >
+				<input type="button" value="Registrar" onclick="f1()"/>
+			</div>
+			<p></p>
+			<div >
+				2.
 				<input type="file" id="input2">
-				<input type="submit" value="Verificar" onclick="f2()"/>
-			</form>
+				<input type="button" value="Verificar" onclick="f2()"/>
+			</div>
 			<span id="hash-1">Huella registrada:</span>
 			<span id="hash-2">Huella a verificar:</span>
 			<h4 id="mensaje">Resultado:</h4>
@@ -54,6 +60,7 @@
 <script>
 
 var archivo_hash;
+var archivo1 = false;
 				
 async function digestMessage(message) {
   const msgUint8 = new TextEncoder().encode(message);                           // encode as (utf-8) Uint8Array
@@ -68,15 +75,17 @@ async function f1(){
 	const digestHex = await digestMessage(selectedFile.lastModified);
 	console.log(selectedFile);
 	archivo_hash = digestHex;
+	archivo1 = true;
 	console.log('Archivo almacenado');
 	document.getElementById('hash-1').textContent = "Huella registrada: "+digestHex;
 	document.getElementById('mensaje').textContent = 'Resultado: Archivo registrado en Blockchain';	
 }
 
 async function f2(){
-	const selectedFile = document.getElementById('input2').files[0];
-	const digestHex = await digestMessage(selectedFile.lastModified);
-	if(digestHex == archivo_hash){
+	if(archivo1){
+		const selectedFile = document.getElementById('input2').files[0];
+		const digestHex = await digestMessage(selectedFile.lastModified);
+		if(digestHex == archivo_hash){
 			console.log('Es genuino');
 			document.getElementById('hash-2').textContent = "Huella a verificar: "+digestHex;
 			document.getElementById('mensaje').textContent ='Resultado: Archivo Genuino';
@@ -85,6 +94,12 @@ async function f2(){
 			document.getElementById('hash-2').textContent = "Huella a verificar: "+digestHex;
 			document.getElementById('mensaje').textContent ='Resultado: El archivo fue alterado ! ';
 		}
+
+	}else{
+		console.log('no hay archivo registrado');
+		document.getElementById('mensaje').textContent = 'Reslutado: registra un archivo primero';
+	}
+
 }
 
 			</script>

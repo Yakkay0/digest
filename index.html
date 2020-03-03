@@ -20,13 +20,20 @@
 			</header>
 
 		<!-- Signup Form -->
-			<form id="signup-form" method="post" action="#">
-				<input type="submit" value="Verifica" onclick="f1()"/>
+			<p>1. Registra un archivo en la Blockchain. Su contenido no saldrá de tu dispositivo, solo la huella que identifica el documento</p>
+			<form >
+				<input type="file" id="input1">
+				<input type="submit" value="Registrar" onclick="f1()"/>
 			</form>
-			<input type="file" id="input">
-			<h3 id="hash-1"></h3>
-			<h3 id="hash-2"></h3>
-			<h2 id="mensaje"></h2>
+			<p>2. Comprueba si el archivo ha sido modificado comparando el registro de la Blockchain</p>
+			<form >
+				<input type="file" id="input2">
+				<input type="submit" value="Verificar" onclick="f2()"/>
+			</form>
+			<span id="hash-1">Huella registrada:</span>
+			<span id="hash-2">Huella a verificar:</span>
+			<h4 id="mensaje">Resultado:</h4>
+			<p><br></p>
 
 		<!-- Footer -->
 			<footer id="footer">
@@ -47,8 +54,7 @@
 <script>
 
 var archivo_hash;
-var start = 0;				
-
+				
 async function digestMessage(message) {
   const msgUint8 = new TextEncoder().encode(message);                           // encode as (utf-8) Uint8Array
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);           // hash the message
@@ -58,26 +64,27 @@ async function digestMessage(message) {
 }
 
 async function f1(){
-	const selectedFile = document.getElementById('input').files[0];
+	const selectedFile = document.getElementById('input1').files[0];
 	const digestHex = await digestMessage(selectedFile.lastModified);
 	console.log(selectedFile);
-	if(start == 0){
-		archivo_hash = digestHex;
-		start = 1;
-		console.log('Archivo almacenado');
-		//document.getElementById('hash-1').textContent = "Hash 1: "+digestHex;
-		document.getElementById('mensaje').textContent = ' Archivo registrado en Blockchain';
-	}else{
-		if(digestHex == archivo_hash){
+	archivo_hash = digestHex;
+	console.log('Archivo almacenado');
+	document.getElementById('hash-1').textContent = "Huella registrada: "+digestHex;
+	document.getElementById('mensaje').textContent = 'Resultado: Archivo registrado en Blockchain';	
+}
+
+async function f2(){
+	const selectedFile = document.getElementById('input2').files[0];
+	const digestHex = await digestMessage(selectedFile.lastModified);
+	if(digestHex == archivo_hash){
 			console.log('Es genuino');
-			//document.getElementById('hash-2').textContent = "Hash 2: "+digestHex;
-			document.getElementById('mensaje').textContent =' Archivo Genuino';
+			document.getElementById('hash-2').textContent = "Huella a verificar: "+digestHex;
+			document.getElementById('mensaje').textContent ='Resultado: Archivo Genuino';
 		}else{
 			console.log('Ha sido alterado');
-			//document.getElementById('hash-2').textContent = "Hash 2: "+digestHex;
-			document.getElementById('mensaje').textContent =' El archivo fue alterado ! ';
+			document.getElementById('hash-2').textContent = "Huella a verificar: "+digestHex;
+			document.getElementById('mensaje').textContent ='Resultado: El archivo fue alterado ! ';
 		}
-	}
 }
 
 			</script>

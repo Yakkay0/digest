@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<!--
+	Eventually by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Blockchain security</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+			<header id="header">
+				<h1>Integridad de documentos</h1>
+				<p>Verifica con Blockchain si un documento ha sido alterado </a>.</p>
+			</header>
+
+		<!-- Signup Form -->
+			<form id="signup-form" method="post" action="#">
+				<input type="submit" value="Verifica" onclick="f1()"/>
+			</form>
+			<input type="file" id="input">
+			<h3 id="hash-1"></h3>
+			<h3 id="hash-2"></h3>
+			<h2 id="mensaje"></h2>
+
+		<!-- Footer -->
+			<footer id="footer">
+				<ul class="icons">
+					<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+					<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+					<li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+					<li><a href="#" class="icon fa-envelope"><span class="label">Email</span></a></li>
+				</ul>
+				<ul class="copyright">
+					<li>&copy; Quidlab.</li><li>Todos los derechos reservados</a></li>
+				</ul>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="assets/js/main.js"></script>
+
+<script>
+
+var archivo_hash;
+var start = 0;				
+
+async function digestMessage(message) {
+  const msgUint8 = new TextEncoder().encode(message);                           // encode as (utf-8) Uint8Array
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);           // hash the message
+  const hashArray = Array.from(new Uint8Array(hashBuffer));                     // convert buffer to byte array
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
+  return hashHex;
+}
+
+async function f1(){
+	const selectedFile = document.getElementById('input').files[0];
+	const digestHex = await digestMessage(selectedFile.lastModified);
+	console.log(selectedFile);
+	if(start == 0){
+		archivo_hash = digestHex;
+		start = 1;
+		console.log('Archivo almacenado');
+		//document.getElementById('hash-1').textContent = "Hash 1: "+digestHex;
+		document.getElementById('mensaje').textContent = ' Archivo registrado en Blockchain';
+	}else{
+		if(digestHex == archivo_hash){
+			console.log('Es genuino');
+			//document.getElementById('hash-2').textContent = "Hash 2: "+digestHex;
+			document.getElementById('mensaje').textContent =' Archivo Genuino';
+		}else{
+			console.log('Ha sido alterado');
+			//document.getElementById('hash-2').textContent = "Hash 2: "+digestHex;
+			document.getElementById('mensaje').textContent =' El archivo fue alterado ! ';
+		}
+	}
+}
+
+			</script>
+
+	</body>
+</html>
